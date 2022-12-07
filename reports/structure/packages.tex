@@ -1,0 +1,127 @@
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\usepackage[english]{babel} % English language hyphenation
+
+\usepackage{microtype} % Better typography
+
+\usepackage{amsmath,amsfonts,amsthm} % Math packages for equations
+
+\usepackage[svgnames]{xcolor} % Enabling colors by their 'svgnames'
+\usepackage{colortbl}
+
+\usepackage{natbib} % Bibliography
+
+\usepackage[hang, small, labelfont=bf, up, textfont=it]{caption} % Custom captions under/above tables and figures
+
+\usepackage{graphicx} % Required for adding images
+
+\usepackage{lipsum} % Lorem Ipsum generator
+
+\usepackage{url}
+
+\usepackage{amssymb}
+
+\usepackage{tabularx} % in the preamble
+
+\usepackage[toc,page]{appendix}
+
+\usepackage{multirow}
+
+% Links
+\usepackage[hyperfootnotes=false]{hyperref}
+
+\hypersetup{
+  colorlinks=false,% hyperlinks will be black
+  citebordercolor=[rgb]{0.5, 0.5, 0.8}, % cite underline, ~blue
+  urlbordercolor=[rgb]{0.5, 0.5, 0.8},  % url underline ~blue
+  linkbordercolor=[rgb]{0.5, 0.5, 0.8}, % link underline ~blue
+  pagebackref=true,
+  bookmarks=true,
+  pdfborderstyle={/S/U/W 1}% border style will be underline of width 1pt
+}
+
+%----------------------------------------------------------------------------------------
+%	MARGINS AND SPACING
+%----------------------------------------------------------------------------------------
+
+\usepackage{setspace}
+\usepackage{indentfirst}
+\setlength{\parindent}{2em}
+\setlength{\parskip}{1em}
+
+\setlength{\footnotesep}{0.5cm}
+\setlength{\skip\footins}{2cm}
+
+\usepackage{geometry} % Required for adjusting page dimensions
+
+\geometry{
+	top=2.5cm, % Top margin
+	bottom=2.5cm, % Bottom margin
+	left=3cm, % Left margin
+	right=3cm, % Right margin
+	includehead, % Include space for a header
+	includefoot, % Include space for a footer
+	%showframe, % Uncomment to show how the type block is set on the page
+}
+
+%----------------------------------------------------------------------------------------
+%	FONTS
+%----------------------------------------------------------------------------------------
+
+\usepackage[T1]{fontenc} % Output font encoding for international characters
+\usepackage[utf8x]{inputenc} % Required for inputting international characters
+
+\usepackage{mathptmx} % Times new roman
+
+%----------------------------------------------------------------------------------------
+%   HEADINGS
+%----------------------------------------------------------------------------------------
+\usepackage{titlesec}
+
+\titleformat{\chapter}
+    {\vspace{-3cm}\normalfont\LARGE\bfseries}
+    {\LARGE\thechapter}
+    {.5em}
+    {\MakeUppercase}
+    [\vspace{-.5ex}\titlerule]
+
+\titlespacing{\chapter}{0pt}{0pt}{10pt}
+
+\titleformat{\section}
+    {\bfseries\Large}
+    {\thesection \hspace{1em}}
+    {0pt}
+    {}
+    []
+
+\titlespacing{\section}{0pt}{0pt}{0pt}
+
+\titleformat{\subsection}
+    {\bfseries}
+    {\thesubsection \hspace{1em}}
+    {0pt}
+    {}
+    []
+\titlespacing{\section}{0pt}{0pt}{0pt}
+
+%----------------------------------------------------------------------------------------
+%	COLORS
+%----------------------------------------------------------------------------------------
+
+\definecolor{LightCyan}{rgb}{0.88,1,1}
+
+%----------------------------------------------------------------------------------------
+%	COMMANDS
+%----------------------------------------------------------------------------------------
+
+\newcommand{\pic}[4]{
+    \begin{figure}[h!]
+    \begin{center}
+        \includegraphics[width=.8\linewidth]{images/#1} % Figure image
+        \caption[#2]{#3} % Figure caption
+        \label{#4} % Label for referencing with \ref{map}
+    \end{center}
+    \end{figure}
+}

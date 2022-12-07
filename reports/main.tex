@@ -1,0 +1,75 @@
+\documentclass[12pt, a4paper]{report}
+
+%----------------------------------------------------------------------------------------
+%   PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+\input{structure/definitions.tex} % Definitions, user, title, ...
+\input{structure/packages.tex}    % Packages, custom commands
+
+\begin{document}
+
+\input{sections/title.tex}
+
+\setstretch{1.5}
+
+\pagenumbering{roman}
+
+\input{sections/declaration.tex}
+
+\input{sections/ack.tex}
+
+\renewcommand*\contentsname{Table of contents}
+\tableofcontents
+\newpage
+
+\listoffigures
+\newpage
+
+\listoftables
+\newpage
+
+\pagenumbering{arabic}
+
+%-------------------------------------------------------------------------------
+%	SECTIONS
+%-------------------------------------------------------------------------------
+
+    \chapter{Introduction}
+    \input{sections/introduction.tex}
+
+    \chapter{Literature review}
+    \input{sections/litreview.tex}
+
+    \chapter{Design and methodology}
+    \input{sections/design.tex}
+
+    \chapter{Implementation}
+    \input{sections/implementation.tex}
+
+    \chapter{Discussion}
+    \input{sections/discussion.tex}
+
+    \chapter{Conclusion}
+    \input{sections/conclusion.tex}
+%----------------------------------------------------------------------------------------
+%   APPENDIX: ACTIVITIES
+%----------------------------------------------------------------------------------------
+
+\appendix
+\chapter{MIREX MGR breakdown}
+    \input{sections/appendix.tex}
+% \chapter{Second appendix}
+%     \input{sections/appendix.tex}
+\newpage
+
+
+%----------------------------------------------------------------------------------------
+%   BIBLIOGRAPHY
+%----------------------------------------------------------------------------------------
+\renewcommand\refname{bibliography}
+\bibliography{references}
+\bibliographystyle{apalike}
+
+% \printbibliography[title={Bibliography}] % Print the bibliography, section title in curly brackets
+
+\end{document}

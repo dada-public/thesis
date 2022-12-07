@@ -1,0 +1,47 @@
+\section{Research overview}
+
+Unlike many other studies in \textsc{mgr} our project does not try to create a high-performance classifier. We have focused our efforts instead in exploring which is the impact of temporal factors in \textsc{mgr} classifiers design.
+
+We have used a common modern approach, based in convolutional neural networks and visual sound representations. We have also applied a data augmentation technique which was the key to obtain models close to the state of the art and, on the best of our knowledge, is not in use in any academic research project.
+
+However, in our opinion, the most valuable insight that can be drawn from this study is the incidence of sound representation, algorithmic design and their relationships.
+
+\section{Design and experimentation}
+
+Based on exhaustive research on scientific literature (we have reviewed 20 years of \textsc{mirex} submissions and \textsc{gtzan} specific research) we have addressed the problem of classifying musical genre in natural songs.
+
+This is an important and widely studied (but still open) problem in \textsc{mir} that have received much attention from the scientific community. Thus, a wide range of ideas and techniques have been tested in the last decade.
+
+While most of this studies tried to borrow data science findings and applied them to the \textsc{mgr} problem, our work focused on figuring out what are the causes that make a \textsc{mgr} classifier successful, rather than trying to just create another brand new model.
+
+\section{Contributions and impact}
+
+Our implementation design uses a common ensemble approach: the voting system commented in section \ref{sec:augmentation}. However, this design (due to the need to augment \textsc{gtzan} data) ended up being a more simple setup than many other \textsc{gtzan}-based state of the art designs, which are often based on a combination of cutting-edge ensemble techniques (AdaBoost, Bagging) and deep \textsc{dsp} knowledge.
+
+Despite we have used a relatively straight configuration, we could create models that meet general \textsc{mgr} standards and, in the best case scenario (\textsc{melspectrograms} and $2D$ networks), are close to \textsc{gtzan} state of the art, which ranges from $70$ to $85\%$.
+
+We think about this performance achievement as a solid basis to fundament our conclusions, i.e., the models are good enough to be considered. Therefore, the conclusions about what factors influence the performance might be valid, if they reach statistical significance.
+
+Regarding our results, we have found that certain sound representations are more likely to produce good models. {\bf Mel-based representations perform best in all our experiments}, which confirm previous research in the field.
+
+The presence of $2D$ and $1D$ patterns in song spectrograms (See section: \ref{sec:temporalfeat}) play a crucial role: those algorithms using {\bf $2D$ convolutions always produce better models}, regardless of the sound encoding used during training.
+
+On the other hand, we found an interaction effect between dimensionality and the sound representation: a $2D$ design has a more positive impact when the model is trained using \textsc{cqt-spectrograms}. The improvement due to dimensionality is also present for \textsc{melspectrograms} but the effect is smaller.
+
+On the best of our knowledge, the inspiration of the research question and the experimental design are the main novelty of this work.
+
+Both of them could be easily adapted to incorporate new sound representations or algorithmic design variability.
+
+\section{Future work}
+
+We have used a conservative approach in our algorithmic desing: convolutional neural networks ($1D$ or $2D$) have become a {\it de-facto} standard in recent years. That was appropiate to our research goals, since our aim was to contrast the effects of temporal features in \textsc{\textsc{\textsc{mgr}}} classification via sound representation and model design, i.e., we needed to keep the experimental design simple using algorithms that could produce models from each sound representation.
+
+Hence, we rejected those sound representations (\textsc{chromagrams} and \textsc{tempograms}) that showed poor performance. But even if they don not carry information enough to produce good classifiers, they are both music-grounded representations (they encode {\it tempo} and {\it harmony}) that could play a benefitial role for an experiment focused in industry interests, i.e., to create accurate classifiers.
+
+That will lead to more complicated (but interesting) algorithms, mixing several sound representations as the input of our neural networks.
+
+On the other hand, we have conducted a {\it supervised} learning experiment, and we have found that genre similarity (from a musichology perspective) leads to poor performance in self-related categories such as {\it Country, Rock} or {\it Disco.}
+
+It is not a bold assumption, thinking that an {\it unsupervised learning} process would have classified many of \textsc{gtzan}'s {\it Rock, Disco} or {\it Country} songs into a single cluster.
+
+Since the habits of online music consumers rely in \textsc{\textsc{\textsc{mgr}}} to browse the catalogues of streaming publishers and the emergence of new platforms (Epidemic Sound, for instance) where the business model is focused on open-source music to play the role of background music for third-party creators, in our opinion an {\it unsupervised} version of this project could meet industry needs and a comparision between these to approaches could constitute an interesting research.

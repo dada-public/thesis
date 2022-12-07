@@ -1,0 +1,171 @@
+\label{chap:litreview}
+A typical approach in \textsc{\textsc{mgr}} is two fold: First, we need a proper representation of sound. Second, we will use a particular algorithm or technique to process the data in our representation.
+
+It is the combination of representation and a classifier which determines good or bad performance.
+
+Most of these representations come from \textsc{\textsc{dsp}} practice, being common choices the Mel’s Frequency Cepstral Coefficients \citep{zhou} combined with spectrograms \citep{markhandy}
+
+Meanwhile, spectrograms use the Short-Time Fourier transform to represent the sound in a graphical manner, \textsc{mfcc} consists of a numerical representation of sound features.
+
+Usually, the representation choice is grounded in \textsc{\textsc{dsp}} background, i.e., domain knowledge. However, it has to be noted that, due to copyright restrictions, the
+common datasets of choice in \textsc{\textsc{mgr}} do not provide access to the actual songs. \textsc{gtzan}, for instance, includes $30s$ excerpts.
+
+\section{Generic approaches}
+
+\subsection{Research on feature engineering}
+
+\citet{yandra}, used a combination of spectrotemporal features (timbre, \textsc{mfcc}...) and \textsc{svm} classifiers to report accuracy varying from 80\% to 90\% in the \textsc{gtzan}\footnote{We will see later on that some of these excellent results are controversial} dataset.
+
+\citet{valero} presented an alternative to \textsc{mfcc}s: the gammatone cepstral coefficients. However, they found that these coefficients do not represent a significant improvement over the commonly used \textsc{mfcc}.
+
+This work, thus, seems to support the idea of \textsc{mfcc}s as "{\it unarguably the single most important feature}" \citep{zhou}
+
+\citet{granmarusu}, faced the sub-problem of representation defining an optimal set of cepstral coefficients. In the first case\footnote{This paper reported the best classification accuracy; peaking at 99\%. However, Granma and Rusu, 2017 addressed a slightly different problem: audio classification where the audio clips under study do not represent music tracks.} the focus was to select an {\it accurate} number of Mel’s coefficients.
+
+\subsection{Research on experimental design}
+
+Spectrograms provide a pictorial representation of the temporal evolution of frequency domain sound features \citep{markhandy, 45} Several studies have taken advantage of this image-based representation.
+
+\citet{limetal} built an \textsc{svm} classifier using spectrotemporal features, reporting accuracies that varies from 80\% to 90\% (the exact figures depend on feature selection in their experiments) in the \textsc{gtzan} dataset.
+
+
+However, with no doubt, it is the use of neural networks what get the most out of the spectrogram representation in recent years.
+
+A paper on the topic \citep{rajana} reported the use of Convolutional Neural Networks (\textsc{cnn}), Deep Belief Networks (\textsc{dbnn}) and Deep Neural Networks (\textsc{cnn}) to address the problem of \textsc{\textsc{mgr}}.
+
+The common approach seems to be a direct translation of findings in the area of image classification using the spectrogram representation.
+
+\citet{costaoliveira} compared the use of \textsc{cnn} over \textsc{lmbd} and \citet{ismir} datasets with the results obtained using \textsc{svm} classifiers. They reported accuracies in the range of 80\% that peak to 90\% when the experiment involved an ensemble setup mixing \textsc{svm} and \textsc{cnn}’s.
+
+\citet{costavalle} describes an experiment using \textsc{cnn} reporting a classification rate up to 90\%. Unfortunately, they do not provide access to the dataset under study.
+
+\citet{gardis} used an original approach known as {\it "learning transfer"} where a \textsc{cnn} was trained against a purely visual classification dataset \citep{lsvrc} and then the resulting model was used to classify instances of in the \textsc{gtzan} dataset. They obtained accuracies up to 75\%
+
+Using a different approach \citet{hamel} combine \textsc{dbnn} as a feature selectors to feed an \textsc{svm} classifier obtaining accuracies up to 85\% using the \textsc{gtzan} dataset.
+
+Even though deep learning techniques have become popular, different authors conducted research using pure machine learning systems: \citet{bergstra} presented AdaBFFs an AdaBoost algorithm that reached accuracy up to 85\% in \textsc{gtzan} using \textsc{svm} weak learners; and performed the best in the 2005 international \textsc{\textsc{mgr}} conference \citet{mirex}
+
+\citet{best61} described a system using a sparse representation classification based on auditory features dictionaries, reporting a classification accuracy up to 90\% in \textsc{gtzan}. However, \citet{accuracy} pointed flaws in their experimental process that reduced their performance to a more common 80\% in subsequent replications.
+
+\citet{mallat} designed a method making use of the features proposed by “Multiscale Scattering for audio classification” and Bayesian classifiers. They reported an 82\% classification accuracy in \textsc{gtzan}.
+
+\section{\textsc{\textsc{mgr}} research}
+
+\subsection{Music Information Retrieval eXchange}
+
+The Music Information Retrieval eXchange is the reference conference in Music Information Retrieval. Regularly since 2007, \textsc{mirex} has run contests covering the main topics in the area: tempo estimation, musical transcriptions, onset detection, and, music genre recognition.
+
+Regarding \textsc{\textsc{mgr}}, \textsc{mirex} has different tracks that depend on the type of music under analysis: Kpop, Latin, and general popular music.
+
+Since the competition based in "general popular music" has a long recorded history in \textsc{mirex} and it is quite similar to the contents present in our dataset, it is a good source to define \textsc{\textsc{mgr}}'s {\it state of the art.}
+
+Each submission to \textsc{mirex} is evaluated against a randomized experimental ANOVA design and they include a brief paper summarising the contents of the submitted works.
+
+We comment here our conclusions after an exhaustive\footnote{Sadly, some papers in \textsc{mirex} history are not available from its website. Their links throw 404 \textsc{http} errors. We have excluded these papers in our analysis. This is the reason why we don't have data for 2010 and 2011} literature review of \textsc{mirex}'s papers since 2007. However, Appendix \ref{appendix:mirex} contains a paper breakdown and the bibliography includes their references.
+
+Having said that, our interest in \textsc{mirex} data is to answer some of the questions we pointed out in chapter \ref{chap:introduction}: {\it Which are popular algorithms in \textsc{\textsc{mgr}} research? What is a good performance in \textsc{mirex} submissions? Are there any relevant trends to notice?}
+
+\paragraph{ALGORITHMS}
+
+We see (Fig: \ref{fig:algobreaklabel}) that the research community consider Support Vector Machines as the main technique to develop classifiers in \textsc{\textsc{mgr}}, despite some other algorithms such as Neural Networks (\textsc{nn}) or K-nearest neighbours (\textsc{knn}) are also present.
+
+% % {image_path}{short}{caption}{label}
+\pic{algo_breakdown.png}{\textsc{mirex} algorithm breakdown}{Algorithm usage in \textsc{mirex} since 2007}{fig:algobreaklabel}
+
+
+However, the most noticeable trend is the {\bf use of Neural Networks} which peaked at $50\%$ in the last editions, constantly growing since its debut in 2007.
+
+% % {image_path}{short}{caption}{label}
+\pic{boxplot.png}{\textsc{mirex} performance evolution}{Average accuracy evolution in \textsc{mirex} since 2007}{fig:accevlabel}
+
+\paragraph{PERFORMANCE}
+
+We see in the chart (Fig: \ref{fig:accevlabel}) \textsc{mirex} accuracy for music genre recognition has progressed slowly from a $60\%$ {\bf to the band of $70 - 80\%$}.
+
+There are also some outliers (Fig: \ref{fig:accevlabel}). A closer read of \textsc{mirex} papers shows that those data points belong to papers which use {\it ad-hoc} algorithms. Therefore, \textsc{mirex} data seems to confirm \textsc{\textsc{mgr}} as a playground for machine-learning fundamental research.
+
+
+\subsection{The \textsc{gtzan} dataset}
+
+The music collection under study in this work is the \textsc{gtzan} dataset, publicly available from:
+
+\begin{center}
+\textcolor{gray}{
+  \large{
+    \url{http://opihi.cs.uvic.ca/sound/genres.tar.gz}
+  }
+}
+\end{center}
+
+Its availability and the fact that the dataset provides real audio files\footnote{It is a common practice in \textsc{\textsc{mgr}} datasets, like the Million songs dataset, to provide references and metadata (including pre-calculated features) instead of the real audio files} turn this dataset into {\it "the most-used public dataset"} \citep{metaGTZAN}
+
+\textsc{gtzan} includes 1000 audio excerpts (30s length each) from popular music, i.e., \textsc{gtzan} does not represent a certain musical niche (like the Latin Music Database, \citet{latin}) but an example of the mainstream musical background. (see Table \ref{tab:gtzandesc})
+
+\begin{center}
+
+  \begin{tabularx}{\textwidth}{r | X}
+    \multicolumn{2}{c}{\textsc{\textsc{gtzan} description}} \\
+    \hline
+
+    \textsc{audio format} & \texttt{.au} \\
+    \textsc{sample rate} & $22050 Hz$ \\
+    \textsc{excerpt length} & $30$ secs \\
+    \textsc{total excerpts} & $1000$ \\
+    \textsc{Nº classes} & $10$ \\
+    \textsc{Classes} & \texttt{blues, classical, country, disco, hip-hop, jazz, reagge, rock, pop} \\
+    \textsc{excerpts / class} & $10$ \\
+    \textsc{authors (summary)} & Mozart, Morphine, John Lee Hooker, Britney Spears... \\
+    \hline
+
+  \end{tabularx}
+
+
+  \captionof{table}[\textsc{gtzan} description]{\textsc{gtzan} description \citep{metaGTZAN}}
+  \label{tab:gtzandesc}
+
+\end{center}
+
+
+\begin{center}
+
+  \begin{tabularx}{\textwidth}{r | X}
+    \multicolumn{2}{c}{\textsc{gtzan flaws description}} \\
+    \hline
+
+    \textsc{exact replicas} & $50$ \\
+    \textsc{mislabellings} & $22$ \\
+    \textsc{versions} & $13$ \\
+    \textsc{conspicuous classifications\footnote{Decisions made by \textsc{gtzan} authors are controversial}} & $43$ \\
+    \textsc{contentious misllabelings\footnote{The audio content and its labelling does not fit musicological criteria}} & $63$ \\
+    \textsc{artist unbalance} & $\frac{35}{100}$ reggae songs are Bob Marley's songs, $\frac{24}{100}$ pop songs are Britney Spears, ... \\
+    \textsc{quality} & $1$ sound is heavily distorted \\
+    \hline
+
+  \end{tabularx}
+
+  \captionof{table}[\textsc{gtzan} problems description]{\textsc{gtzan} problems description \citep{metaGTZAN}}
+  \label{tab:gtzanflaws}
+
+\end{center}
+
+
+
+\textsc{gtzan} is so common in \textsc{\textsc{mgr}} research that we also have a good understanding of its contents and flaws. We know, for instance, that \textsc{gtzan} present problems such as exact replicas or artist unbalance.
+
+Therefore the fact that \textsc{gtzan} is a widespread dataset in \textsc{\textsc{mgr}} research and the abundance of metadata and information about its contents qualifies it as a good benchmark for our purposes.
+
+In their study of \textsc{gtzan}, cite, offers a summary (Fig: \ref{fig:soalabel}) of the perceived performance in \textsc{\textsc{mgr}} using \textsc{gtzan}.  The also calculated a theoretical estimation of the expected performance for a "perfect classifier" that would peak at $94.5\%$ average accuracy.
+
+\pic{state-of-the-art.png}{\textsc{gtzan} state of the art}{\textsc{gtzan}'s state of the art according to \citet{metaGTZAN}: each mark represents the accuracy declared in a study, shapes denotes the number of folds used to evaluate their results, red marks indicates papers that have been questioned in the literature and the upper grey horizontal line established the theorical maximum accuracy}{fig:soalabel}
+
+As we see (Fig: \ref{fig:soalabel}) the results follow a {\it "logarithmic"} shape, where the vast majority of papers reported accuracies between $70\%$ to $80\%$. The best results \citep{best7, best61, best16} peak around $90\%$ (some of them even exceed the theoric maximum \citet{discard56}) but it worth to mention that most of the papers reporting performances beyond $85\%$ have been challenged or invalidated. \citep{accuracy}
+
+Thus, {\bf the range of $75\%$ to $85\%$ seems to be a good assumption to describe the state of the art in \textsc{gtzan}}.
+
+\subsection{What does {\it state of the art} really mean?}
+
+We have explored so far many examples of research papers in \textsc{\textsc{mgr}}, including generic approaches, research activities in \textsc{mirex} and \textsc{gtzan} driven works.
+
+We conclude that classifiers applied to music genre recognition can be considered {\bf good} if they reach an accuracy from $60\%$ to $70\%$ and {\bf state of the art} from $70\%$ to $85\%$, being $94.5\%$ our theorical maximum performance.
+
+We will use this description to describe (or discard) the performance of models in our experiment.

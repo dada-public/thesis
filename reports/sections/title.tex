@@ -1,0 +1,20 @@
+%----------------------------------------------------------------------------------------
+%   TITLE PAGE
+%----------------------------------------------------------------------------------------
+\begin{titlepage} % This page has no number, count will start in the next page.
+    \raggedleft % Right align the title page
+    \rule{2pt}{\textheight} % Vertical line
+    \hspace{0.05\textwidth} % Whitespace between the vertical line and title page text
+    \parbox[b]{0.8\textwidth}{ % Paragraph box for holding the title page text, adjust the width to move the title page left or right on the page
+
+        {\Huge\bfseries \newtitle}\\[2\baselineskip] % Title
+        {\large\textit{Master thesis on Data Analytics}}\\[4\baselineskip] % Subtitle or further description
+        {\Large\textsc{\newauthor}}\\ \\% Author name, lower case for consistent small caps
+        {Student no: {\bf \studentno}, Programme: {\bf \programme}}\\
+        Source of data: {\bf \data}\\
+        \vspace{0.5\textheight} % Whitespace between the title block and the publisher
+
+        {\noindent Dublin, ~\newdate}\\[\baselineskip] % Publisher and logo
+    }
+
+\end{titlepage}

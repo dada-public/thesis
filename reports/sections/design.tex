@@ -1,0 +1,192 @@
+\label{chap:design}
+
+\section{Representations of sound}
+
+The first factor in our experiments is pairing the algorithms with a time-based representation of \textsc{gtzan}'s songs.
+
+We will use spectrograms to encode the sounds in our dataset, i.e., we have adopted visual representations as for the source of data for all the algorithms in our work.
+
+Essentially, a spectrogram comes from a process which starts windowing a raw audio signal in several chunks and applying some calculations over them. This process ends up creating a set of coefficients able to be interpreted as pixels in an image. Thus, what differentiates two representations (at least for our purposes and the scope of this work) is the type of transformation they apply to the windowed excerpts.
+
+We have studied four different representations of sound:
+
+\pic{spectrograms.png}{Spectrograms}{Different spectrograms from the first {\it Rock} song in \textsc{gtzan}. The first two examples are based in {\it perceptual} features and the other two use {\it musical} concepts. All of them describe the evolution of sound accross time (the $x$ axis)}{fig:spectrogramslabel}
+
+\begin{enumerate}
+
+  \item [a)] { {\bf \textsc{melspectrograms}}}
+
+  \item [] {
+    They apply a Short Time Fourier Transform (\textsc{stft}) to each excerpt and map the results onto a Mel scale.
+
+    Perceptual features like the Mel scale its closely related Mel Cepstral Coefficients are widely used in the literature, and considered by \citet{zhou} as {\it "unarguably the single most important feature in \textsc{\textsc{mgr}}"}. The melspectrogram is no exception and it is the most used sound representation in \textsc{\textsc{mgr}}.
+  }
+
+  \item [b)] {{\bf \textsc{CQT-spectrograms}} \citep{cqt}}
+
+  \item [] {
+    This representation substitutes the use of \textsc{stft} for \textsc{cqt} transforms, and a logarithmic scale mapping.
+
+    Given a signal $x(n)$ a \textsc{cqt} transform is defined as:
+
+    \begin{equation}
+      X^{CQ}(k,n) = \sum_{j = n - \lfloor \frac{N_k}{2} \rfloor}^{n + \lfloor \frac{N_k}{2} \rfloor} x(j) a^{*}_{k}(j - n + \frac{N_k}{2})
+    \end{equation}
+
+    where:
+
+    \begin{equation}
+      a_{k}(n) = \frac{1}{N_k} \omega (\frac{n}{N_k}) e^{-i 2\pi n \frac{f_k}{f_s}}
+    \end{equation}
+
+    and $a^{*}$ is the complex conjugate of $a$.
+
+    The $f_k$ members are the center frequencies of each $k$ bin and $f_s$ denotes the sampling rate and $\omega$ is the hamming window. Since they use a logaritmic mapping, \textsc{cqt-spectrograms} are also a {\it perceptual} representation.
+  }
+
+  \item [c)] {{\bf \textsc{chromatograms}} \citep{chroma}}
+
+  \item [] {
+    A {\bf chromatogram} it's a type of sound plot that represents the evaluation of harmony over time.
+
+    \pic{chroma_diagram.png}{Chromatogram diagram}{A simplified case: chromatogram of a C-major scale}{fig:chromalabel}
+
+    In a piece of music, we find that at any given moment several notes are being played at the same time with different intensities. The Chromatogram represents the intensity of each of the 12 pitch classes per instant using a colour code.
+    \newpage
+  }
+
+  \item [d)] {{\bf \textsc{tempograms}} \citep{tempo}}
+
+  \item [ ]{
+    The process to calculate a chromatogram relies upon a similar procedure: we first apply a windowing process and then we calculate the \textsc{stft} of each window.
+
+    \pic{tempo.png}{Tempogram calculationss}{Calculation process of a tempogram and its image interpretation in greyscale}{fig:tempolabel}
+
+    This produces a set of numbers $v_1, v_2, v_3, \ldots \in \mathbb{R}$ that we will use to create a self-similarity matrix using the cosine distance.
+
+
+    This self-similarity matrix is known as the {\bf beat spectrogram} or {\bf tempogram}.
+  }
+\end{enumerate}
+
+So far, we are dealing with different time-based sound representations: \textsc{melspectrogram} and \textsc{cqt-spectrograms} implement logarithmic scales, i.e., they are grounded in perceptual or psychoacoustics aspects of sound. Meanwhile, \textsc{chromatograms} and \textsc{tempograms} try to grasp musicological concepts such as tempo and harmony.
+
+Despite we have described all the algorithms that support these representations, in practice, we have used the four functions provided by \textsc{librosa} to calculate them. Since our aim is not outperform the works found in the literature but to compare them, we have used all \textsc{librosa} defaults in our experiments.
+
+\section{Temporal features in neural network design}\label{sec:temporalfeat}
+
+Since the sound representations we have presented so far translate the sound waves into images (spectrograms) our neural networks design relies in convolutional layers.
+
+A closer look on the spectrograms obtained from \textsc{gtzan} songs reveals that we have two types of patterns to learn (Fig: \ref{fig:patternslabel}): those that are expressed horizontally, and those expressed vertically.
+
+% % {image_path}{short}{caption}{label}
+\pic{patterns.png}{1D and 2D patterns in songs}{Vertical and horizontal patterns over a \textsc{gtzan} song spectrogram}{fig:patternslabel}
+
+Our intuition is that vertical patterns encode the sequential nature of music. Therefore we have developed a network geometry  inspired in previous deep learning success on sequential data as natural language processing. I.e., we use unidimensional convolutions progressing on spectrograms' time axis followed by \textsc{lstm} layers.
+
+% % {image_path}{short}{caption}{label}
+\pic{conv_frames.png}{Dimensionality in convolutional layers}{Behaviour of convolutional layers on a spectrogram. 1D convolutions (green) evolve horizontally, meanwile 2D convolutions (red) evolve in both horizontal and vertical directions}{fig:convlayerslabel}
+
+To contrast this setup with the effect of horizontal patterns, we also include a more traditional deep learning design, using bidimensional convolutions and dense layers.
+
+This {\it dimensionality} of the convolutions is the way in which our algorithms will produce models adapted (or not) to the temporal features in \textsc{gtzan} songs.
+
+\section{Data augmentation and voting}\label{sec:augmentation}
+
+The design of the algorithms (1D and 2D) with which we have built the models of our experiments have been based on a trial and error process.
+
+Due to the use of graphical sound representations and our intention to adapt the design revealing the temporal aspects in the GTZAN songs (See Fig: \ref{fig:patternslabel}) the use of convolutional neural networks is natural. On the other hand, we have combined these layers of convolution with dense layers or \textsc{lstm} as is usual practice.
+
+However, at least at the beginning, no configuration produced acceptable results for any representation of the concessions contained in \textsc{gtzan}.
+
+The reason why none of these tests proved successful is due to the lack of data in \textsc{gtzan}. After all, this dataset only contains only $1000$ audio excerpts divided equally into $10$ musical genres. While other commonly used datasets raise the figure to several thousands or millions.
+
+Following this intuition, we decided to implement a process of {\it data augmentation} or {\it feature engeenering} prior to the model creation phase, which significantly increased the performance of the models. From maximum figures around $40\%$, to exceed $80\%$ in the best case scenarios.
+
+In essence, this process consists of cutting each song of the \textsc{train} dataset into smaller chuncks overlapping each other and considering these chuncks as complete songs to be classified separately.
+
+% {image_path}{short}{caption}{label}
+\pic{augment.png}{Data augmentation diagram}{Data agumentation process: each song in GTZAN is splitted in $3$s chunks overlapped by 50\% to create new data points}{fig:augmentlabel}
+
+As indicated in Fig: \ref{fig:augmentlabel}, our criterion for cutting each song of \textsc{train} is to use excerpts of $3$ seconds duration overlapped at $50\%$. This managed to increase the number of data points in \textsc{train} from $700$ examples to the range of $10000$, causing an increase in the effectiveness of the learning process.
+
+This procedure has, however, a problem: training our algorithms on pieces of $3$ seconds in length, the resulting models are only able to make predictions using $3$ seconds length songs; but our original challenge was to classify the \textsc{gtzan} tracks (which are the ones that make up the \textsc{test} dataset) that have a duration of $30$ seconds.
+
+To solve this problem we consider each model produced for a duration of $3$ seconds as a {\it weak learner} in an bigger ensemble model that combines them using a voting system.
+
+Thus, when it comes to classifying a song of $30$ seconds, first we reproduce the process of increasing the data for that particular song, obtaining several chuncks. Then we train and apply the {\it weak learner} to each one, obtaining an array of predictions (not necessarily coincident) from which we take the most common prediction of them all as our final output.
+
+This process produced a significant increase in the results obtained. achieving valid models for the analysis.
+
+\section{Experimental design}
+
+\subsection{Hypothesis}
+
+Once we have built models from our design of neural networks and using several different representations of the songs, we need an experimental method that allows us to draw conclusions.
+
+In our case, we adopted an approach similar to that used in \textsc{mirex}, i.e., using a {\it 2 way ANOVA with repeated measures} statistical model, being the factors under study {\it the dimensionality of the networks} and {\it the sound representations} in use in each repeated measure.
+
+This let us to test the following hypotheses:
+
+\begin{itemize}
+  \item {
+    {\bf Dimensionality}
+
+    $H_0:$ There are no significant differences between the perceived performance using models from one-dimensional or two-dimensional networks.
+  }
+  \item {
+    {\bf Representation}
+
+    $H_0:$ There are no significant differences in the perceived performance due to the use of the different representations of the sound used.
+
+  }
+  \item {
+    {\bf Interactions}
+
+    $H_0:$ There are no significant interactions that affect the performance of the models between the use of algorithms of different dimensionality and different representations of sound.
+  }
+\end{itemize}
+
+\subsection{Repeated measures}
+
+So far, we mentioned that our experimental design takes the form of a 2 way ANOVA design with repeated measures. Each of these measurements is an experiment in its own, consisting in the following steps:
+
+\begin{enumerate}
+  \item {
+    Set a sound representation and an algorithmic design.
+  }
+  \item {
+    Create a \textsc{train/test} split using a particular random seed to randomize the original dataset. This step is what it truly differentiates one experiment to the next.
+  }
+  \item {
+    Calculate the chosen sound representation from the original audio files in \textsc{gtzan}
+  }
+  \item {
+    Perform the augmentation process over the \textsc{train} dataset.
+  }
+  \item {
+    Train the selected algorithm over the augmented \textsc{train} dataset.
+  }
+  \item {
+    Evaluate the model on the \textsc{test} dataset using the voting system.
+  }
+  \item {
+    Store the performance metrics obtained for further analysis.
+  }
+\end{enumerate}
+
+\subsection{Statistical setup}
+
+The use of the \textsc{anova} model for the case of repeated measures is due to the fact that, once an algorithm and a representation are set, what differentiates two models in our experiment is the initial randomization of the songs in \textsc{gtzan}, used before creating the \textsc{train / test} partition. That is, we try to avoid the influence of a {\it "lucky split"} by correctly setting the sample size ($n$), the power of the test ($\beta$) and the level of significance ($\alpha$)
+
+To correctly choose these values, we have used the available scientific literature:
+
+\begin{enumerate}
+  \item {
+    $\alpha = 0.05$ and $\beta = 0.8$ as observed in the papers presented in \textsc{mirex}. \citep{37}
+  }
+  \item {
+    $n = 97$ calculated from the previous values ​​using the {\it G*Power} \citep{36, 42} software with the restriction of noticing {\it small effects}
+  }
+\end{enumerate}
+

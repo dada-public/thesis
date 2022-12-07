@@ -1,0 +1,152 @@
+\label{chap:discussion}
+
+As we have already mentioned (Section: \ref{chap:design}) our experimental design consists of a 2-way \textsc{anova} test with repeated measures, where the algorithm's dimensionality ({\it dim}) and the sound representation ({\it repr}) are the two factors studied and we recorded $97$ samples of the overall accuracy per each combination of their levels.
+
+During our experimentation we noticed that only \textsc{melspetrograms} and \textsc{cqt-spectrograms} were able to achieve overall accuracies up to $50\%$. Therefore, we excluded those levels in the {\it dim} factor corresponding to \textsc{chromagrams} and \textsc{ tempograms}, due to their poor performance in our experimental setup.
+
+Thus, we are considering onl the accuracy obtained using \textsc{melspectrograms} and \textsc{cqt} representations as levels for the {\it repr} factor and $1D$ or $2D$ as the levels for {\it dim} factor, i.e., our \textsc{anova} repeated measures table is as follows:
+
+\begin{center}
+
+  \begin{tabular}{c|c|c}
+
+    \textsc{dim / repr} & \textsc{MEL} & \textsc{CQT} \\
+    \hline
+    \hline
+
+    \textsc{1d} & $mel_{1D}$ (x $97$) & $cqt_{1D}$ (x $97$) \\
+    \textsc{2d} & $mel_{2D}$ (x $97$) & $cqt_{2D}$ (x $97$) \\
+
+  \end{tabular}
+
+
+  \captionof{table}{\textsc{anova} repeated measures breakdown}
+  \label{tab:anovadescription}
+
+\end{center}
+
+This means that we have created and evaluated $97$ models per each group. The results can be found at \texttt{/data/processed/results/} folder. And they are easily reproductable using the \texttt{make} commands detailed in chapter \ref{chap:imple}.
+
+Let alone with the overall accuracies we have also recorded partial metrics like per-class precision and recall. We will use these metrics to analyse the behaviour of each combination of the levels in our experiment in detail.
+
+Here, we will only describe the results and conclusions we can draw from this data. However a complete breakdown of our statistical analysis (including Python and R's scripts) are available via two notebooks at:
+
+\begin{center}
+  \texttt{notebooks/CHECKING ANOVA ASSUMPTIONS.ipynb}
+
+  \texttt{notebooks/ANALYSIS.ipynb}
+\end{center}
+
+included in this project's bitbucket repository.
+
+\section{Checking \textsc{anova} assumptions}
+
+The \textsc{anova} design has been built on top of a number of statistical assumptions about our experimental practice and the shape of our data.
+
+\begin{enumerate}
+  \item {{\bf The samples must be independent.}}
+  \item [] {
+    This is a consequence of the process we have followed to obtain each sample: once a sound representation and the algortihm are set, the training and evaluation phases do not depend on previous results. Thus, all samples are independent.
+  }
+  \item {{\bf The groups must have the same sample size.}}
+  \item [] {
+    All groups in our experiment have $97$ examples.
+  }
+  \item {{\bf The populations from which the samples were obtained must be normal.\footnote{
+  We used graphical methods to assess normality due to a relatively small sample size that can undermine analytical normality tests like Shapiro-Wilks. Either way, normality assumption for \textsc{anova} is a weak condition, since the F-test has been reported reliable even with approximately normal data. \citep{47, 48}
+  }}}
+  \item [] {
+    We have found evidence of normality for each combination of factor's levels using {\it QQ-plots} and {\it histograms} (Fig: \ref{fig:histogramslabel} and Fig: \ref{fig:qqplotslabel})
+
+    \pic{histograms.png}{Sample groups histograms}{Sample groups histograms}{fig:histogramslabel}
+
+    \pic{qqplots.png}{Sample groups QQ-plots}{Sample groups QQ-plots}{fig:qqplotslabel}
+
+    All cases show symetric histograms and data points lie closely to the diagonal, the present only small departures from normality at the extremes.
+
+  }
+  \item {{\bf Homocedasticity: all the populations have the same variance.}}
+  \item []{
+    Bartlett test did not find evidence to reject the hypothesis that all populations have the same variance ($T=7.451$, $p-value > .05$)
+  }
+\end{enumerate}
+
+
+\section{\textsc{anova} results}
+
+The overall accuracies obtained in our experiments were subjected to a two-way analysis of variance (See the results in Tables: \ref{tab:anovatest} and \ref{tab:resultssummary} and Fig: \ref{fig:interlabel}) having two levels: algorithmic dimensionality ($1D$ or $2D$) and two levels due to the representation of sound in use (\textsc{mel} and \textsc{cqt}). All effects are statistically significant at the $.05$ significance level.
+
+\begin{center}
+
+  \begin{tabular}{c|c|c|c|c}
+
+              & Sum Sq.     & Df.         & F   & Pr(>F) \\
+    \hline
+    dim       & 2.19953310  & 1   & 2884.42369  & 1.188813e-180 \\
+    repr      & 1.19728396  & 1   & 1570.09423  & 9.700310e-138 \\
+    dim:repr  & 0.07515464  & 1   & 98.55629    & 7.952936e-21 \\
+    Residuals & 0.29282131  & 384 & NA          &  NA \\
+
+
+  \end{tabular}
+
+
+  \captionof{table}{\textsc{anova} test results.}
+  \label{tab:anovatest}
+
+\end{center}
+
+\begin{center}
+
+  \begin{tabular}{c|c|c}
+
+    \textsc{dim / repr} & \textsc{MEL} & \textsc{CQT} \\
+    \hline
+
+    \textsc{1d} & $\bar{x} = 65\%$, $\sigma = 2\%$ & $\bar{x} = 51\%$, $\sigma = 3\% $ \\
+    \textsc{2d} & $\bar{x} = 78\%$, $\sigma = 3\%$ & $\bar{x} = 69\%$, $\sigma = 3\% $ \\
+
+  \end{tabular}
+
+
+  \captionof{table}{Experiment results summary}
+  \label{tab:resultssummary}
+
+\end{center}
+
+
+\pic{interaction-effects.png}{Interaction effects}{Interaction effects plot}{fig:interlabel}
+
+The main effect of algorithmic dimensionality yielded an F-ratio of $F=2884.42369$, $p-value < 0.05$ indicating that the mean accuracy of the models produced by $2D$-driven algortihms was significantly greater than the accuracy of $1D$ models.
+
+The main effect of sound representation yielded an F-ratio of $F=1570.09423$, $p-value < 0.05$ indicating that the mean accuracy obtained by models using \textsc{melspectrograms} is significantly greater than the mean accuracy of those models produced using \textsc{cqt-spectrograms}
+
+The interaction effect between dimensionality and sound representation ($F = 98.55629$, $p-value < 0.05$) was found significant.
+
+Hence, we see that dimensionality has a positive impact in the performance: $2D$ algorithms obtain better results than unidimensional setups. There is also a weak interaction effect (the two non-parallel lines at \ref{fig:interlabel} have almost the same slope) showing that algorithmic dimensionality affects more when the algorithm uses \textsc{cqt-spectrograms}.
+
+Having said that, the sound representation seems to be the key factor: \textsc{melspectrograms} outperforms \textsc{cqt-spectrograms} regardless the dimensionality used to built the model.
+
+\section{Precision and recall per-class}
+
+In adition to overall accuracy, the evaluation phase of each model also recorded its precision and recall scores per class. Now, averaging these metrics we can analyse each group behaviour per class (See Figs: \ref{fig:mel1dlabel}, \ref{fig:mel2dlabel}, \ref{fig:cqt1dlabel} and \ref{fig:cqt2dlabel})
+
+\pic{bars_mel1.png}{MEL\_1D per-class performance}{MEL\_1D per-class performance}{fig:mel1dlabel}
+
+\pic{bars_mel2.png}{MEL\_2D per-class performance}{MEL\_2D per-class performance}{fig:mel2dlabel}
+
+\pic{bars_cqt_1.png}{CQT\_1D per-class performance}{CQT\_1D per-class performance}{fig:cqt1dlabel}
+
+\pic{bars-cqt-2.png}{CQT\_2D per-class performance}{CQT\_2D per-class performance}{fig:cqt2dlabel}
+
+{\it Classical} and {\it Metal} genres are the two best categories with both precision and recall peaking up to $80\%$ using \textsc{melspectrograms}, meanwhile {\it Country}, {\it Disco} and {\it Rock} present lower figures. This behaviour across categories is dimension independent
+
+In terms of per-class performance using \textsc{melspectrograms}, the $2$-dimensional convolutional networks perform better. Not only because the figures per each class are higher, but because they are more uniform, i.e., we appreciate less dispersion.
+
+Using \textsc{cqt-spectrograms}, we find a similar behaviour in the per-class charts: {\it Classical} and {\it Metal} are the top categories, being {\it Country}, {\it Disco} and {\it Rock} the genres were the algorithms peform worst. Again, the performance observed using bidimensional convolutions is better and more uniform between genres than the figures obtained using unidimensional algorithms.
+
+Except for {\it Classical} songs (they all peak up to $80\%$) the performance observed in the charts describing \textsc{cqt} experiments turned out to be worst than those using \textsc{melspectrograms}.
+
+This situation is consistent with the results of our \textsc{anova} analysis, where we found the $2D$ based models better than their unidimensional counterparts; and \textsc{melspectrograms} better than {\textsc{cqt-spectrograms}
+
+Regarding the per-class performance breakdown, the models meet our intuition: songs in {\it Classical} and {\it Metal} genres are quite distintive from a {\it listener} perspective, whilst {\it Country}, {\it Rock} and {\it Disco} are similar genres. Actually, we can think about {\it Rock} and {\it Disco} as derived genres from {\it Country} (See Fig: \ref{fig:rockslabel})

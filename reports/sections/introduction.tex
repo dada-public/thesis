@@ -1,0 +1,124 @@
+\label{chap:introduction}
+\section{Background} \label{sec:background}
+
+This project addresses the problem of classifying audio tracks according to their musical genre.
+
+Therefore, the project is grounded in the research area of Music Information Retrieval (\textsc{mir}) a specialisation of the broader discipline of Digital Signal Processing (\textsc{dsp}) that encompasses particular problems such as  instrument detection,  beat detection, musical transcription, song  recognition by example \citep{pascar} or Music Genre Recognition (\textsc{\textsc{mgr}}) \citep{tandcook} which is the problem covered in this work.
+
+Since the early 2000s, due to the emergence and success of online music streaming platforms, we find significant research activity on \textsc{mir}, being the Music Information eXchange \citep{mirex} the main source in the topic.
+
+\textsc{mir}'s progress has always been closely tied to its industrial applications like \citet{shazam}, the most popular application developed using \textsc{mir} findings or the different strategies adopted by services like Spotify or Deezer.
+
+Within the collection of problems included in \textsc{mir}, the problem of identifying musical genre have had a deep impact on the modern music industry.
+
+\citet{homsi} found evidence that users are more likely to browse and search by genre than similarity or artist. \citet{venrooija} also pointed out that music classification (machine-based or human-based) has significant effects in sales and the economic success of musical products.
+
+A good example is \citet{epidemic}, a record company based in "open source" principles that have found recently its target audience among the YouTube community. A close look on their website reveals that music genre or music similarity is the main criteria to distribute their catalogue.
+
+Therefore accurate classifiers play a crucial role in the music industry. To the point that \textsc{mgr} can be seen as {\it "the fundamental problem in \textsc{mir}"}
+
+However, \textsc{\textsc{mgr}} is an ill-posed problem: the criteria used to classify a song as {\it rock} or {\it blues} can vary across many factors, including:
+
+\begin{itemize}
+  \item Marketing purposes
+  \item The granularity of the analysis % {image_path}{short}{caption}{label}
+  \newline
+\pic{rocks.png}{Genealogy of Pop Rock music}{Simplified transcription of the "{\it Genealogy of Pop Rock music}", \citet{tufte}. The graph presents a fine-grained categorisation of {\it rock} genres, most of these categories are not present in common \textsc{\textsc{mgr}}'s datasets}{fig:rockslabel}
+  \item Discrepancies between authors or listeners. An experiment conducted by \citet{44}, for instance, found that "{\it humans do not recognize the genres supposedly represented [in the dataset]}"\footnote{We will see during the analysis of our dataset some examples of this problem}
+\end{itemize}
+
+This fuzzy definition of what determines a musical genre produces (inevitably) contentious results in any \textsc{\textsc{mgr}} model.
+
+Although this project is focused on \textsc{\textsc{mgr}} and the design of music classifiers, the strength in our development is to study the effects of sound representations and algorithmic design. Thus, our approach mitigates that complexity adopting as "grounded truth" the labels of a well-known dataset.
+
+Even though, this dimension of complexity in \textsc{\textsc{mgr}} cannot be ignored completely, as we will see later in our literature review.
+
+\section{Research project}
+
+The goal of this project consists of answering the following question:
+
+\begin{center}
+\textcolor{gray}{
+  \large{
+  " Do musical temporal features have a positive and significant impact to classify audio tracks according to their musical genre? "
+  }
+}
+\end{center}
+
+\normalsize
+
+In this context, {\it temporal features} have a double meaning. These features can be expressed in two ways: the method that encodes the raw audio files and the algorithm in use to process it.
+
+Usually, there are two approaches in \textsc{mir}: use of physical metrics \citep{22} like the zero crossing rate, spectral centroids, band energy ratios... Or using spectrograms \citep{45} where the audio signal is analysed in the temporal domain to produce an image based representation.
+
+We will use the second alternative, implementing spectrograms based on different aspects of sound: perceptual or musical features.
+
+On the other hand, our choice for a classifier can also be inspired in the temporal aspects of sound.
+
+In recent years, the best results in \textsc{mir} have used deep learning techniques over datasets in the form of spectrograms. Taking advantage of successful advances in artificial vision, i.e., the use of convolutional neural networks.
+
+But convolutional neural networks have more than one application: they also have shown good performance addressing natural language processing problems, where the combination of unidimensional convolutions and \textsc{lstm} layers have met the sequential nature of text strings.
+
+Music, in its very nature, is a stream of data: a sequence of pulses over time. Thus, our algorithmic approach grasping temporal features in audio clips will include a contrast between unidimensional and bidimensional convolutions.
+
+Since the temporal features are two folded (via sound representation and the algorithm in use) our statistical study of the results will take the form of a multifactorial experimental design.
+
+In addition, we are not interested in outstanding performance figures, but to compare the compounding effects between algorithm and sound representations.
+
+Despite we are not actively chasing high-performance numbers, we will only take into account those steps whose performance is close to the state of the art in \textsc{\textsc{mgr}}. Otherwise, our conclusions would not be truly valid.
+
+Therefore, we decided to use the \textsc{gtzan} dataset \citep{gtzan}; because it has been and studied in depth which let us define precise what is the state of the art in \textsc{\textsc{mgr}}.
+
+\section{Scope and limitations}
+
+As we have mentioned in the {\it Background } (Section \ref{sec:background}) this project is grounded in \textsc{mgr} (a specialised branch of the broader research area known as \textsc{MIR}) but it is constraint by the use of \textsc{gtzan} dataset.
+
+\textsc{gtzan} is a popular dataset for \textsc{mgr} research, we will justify this assert in the literature review, (Chapter: \ref{chap:litreview}) which helps to contextualize our findings. It is also a relatively small dataset where the songs are labelled using only $10$ categories. Hence, the power of \textsc{gtzan} based classifiers are limited to this relatively small number of musical genres.
+
+While it is true that \textsc{gtzan} would not be the best choice to train an ambitious \textsc{mgr} classifier\footnote{A system that can reach the production stage of an online music platform like Spotify, because such system's requirements deal often with a much greater number of categories: rock, southern rock, hard rock...}, it was a reasonable choice for a project like ours. Our aim is to compare the impact of several factors addressing temporal features in music, rather than creating a "{\it perfect}" classifier.
+
+In addition, it worth to mention that this project has been implemented and completely developed using a regular commercial laptop: No university's or cloud computing services have been used.
+
+This does not undermine the validity of our conclusions, but it constraints the complexity of the neural networks in use, which turns into a reduction of the performance that we can achieve.
+
+It is a reasonable assumption that an improvement in hardware resources would lead to better accuracies due to more complex designs or longer training phases.\footnote{This point is crucial and does not refer to "time" considerations but "number of epochs". For instance, our experimentation (running 80 epochs on average) took an entire month 24 hours a day of computing.}
+
+Again, since the aim of this work is not getting outstanding classifiers but researching the factors that help to create them, we did not try to improve our project in this way.
+
+\section{Organisation of this document}
+
+This document contains detailed explanations about the ideas that support our research and those processes required to reproduce the experiments.
+
+The report is organised as follows:
+
+\paragraph{Chapter 1:} Introduction.
+
+Research background. This chapter introduces the project´s guidelines: problem description, research question, limitations...
+
+\paragraph{Chapter 2:} Literature Review.
+
+Since our research is quite specific, we have focused our literature review to assess what exactly the {\it state of the art} is for the specific circumstances of our problem.
+
+Therefore, let alone with a generic background, this chapter analyses historical trends and the performance evolution in \textsc{mgr} research. It also introduces the \textsc{gtzan} dataset: the results obtained using it and the criticism about \textsc{gtzan} found in the literature.
+
+\paragraph{Chapter 3:} Design and methodology.
+
+This chapter covers all the underlying ideas on our project: different types of sound representation and the reasons to justify our experimental design and methodology.
+
+\paragraph{Chapter 4:} Implementation.
+
+This chapter describes the tools and implementations nuances of our design. It also includes a detailed description of a set of command line utilities we have implemented to let the reviewers of this work reproduce the experiments from the scratch.
+
+\paragraph{Chapter 5:} Discussion.
+
+We present here the results of our statistical analysis conducted over our experimental data and we comment briefly (and form an {\it agnostic} perspective) our findings.
+
+\paragraph{Chapter 6:} Conclusions.
+
+In this chapter, we examine our findings in the context of \textsc{mgr} research: how do they confirm other research projects, what is the novelty of our work, future research directions...
+
+
+
+
+
+

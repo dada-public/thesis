@@ -1,0 +1,386 @@
+\label{chap:imple}
+
+During our research and literature review we have found several papers describing ideas and works on the topic, from a generic perspective and directly applied to \textsc{\textsc{\textsc{mgr}}} and \textsc{gtzan} dataset. Regardless of the theories and ideas that may contain, there is a problem common to all of them: {\it the impossibility to reproduce the results}.
+
+
+Either because of the lack of access to the original data that supports the study or because the authors do not provide the code used to process them; the truth is that the content of most papers contain only a summary of the methods used and a description of their results.
+
+
+The lack of reproductability reduces our confidence with respect to the conclusions of these studies, i.e., we must trust the authors of the studiess or its reviewers. Since there is no way to confirm the conclusions independently. It is also not possible, at least it is not easy, to develop new versions based on previous work.
+
+
+This work does not follow this practice: reproductability has been a main criteria to implement the code and has influenced the design of the software necessary for experimentation.
+
+In this chapter, we will describe the implementation developed with attention to the tools developed to promote the reproduction of the experiments.
+
+\section{Requirements, tools and libraries}
+
+This project has been developed under Linux using a Python $3.6.5$ distribution, that uses Anaconda to manage all its dependencies. Hence the necessary environment to replicate this work can be replicated following a these steps:
+
+\begin{enumerate}
+  \item {
+    Install Anaconda Python\footnote{See https://www.anaconda.com}
+  }
+  \item {
+    Install Git\footnote{See https://git-scm.com/}
+  }
+  \item {
+    Clone the Bitbucket repo containing the code.
+
+    \texttt{git clone git@bitbucket.org:victor-santiago/thesis.git}
+  }
+  \item {
+    Replicate the development environment using conda tools:
+
+    \begin{verbatim}
+conda env create -f requirements.yml;
+source base;
+    \end{verbatim}
+  }
+\end{enumerate}
+
+The {\it "requirements.yml"} includes a llist of all third party libraries in use and their own dependencies. But only a few of them are relevant to describe the project:
+
+\begin{itemize}
+  \item {{\bf Tensorflow and Keras}}
+  \item []{
+    Both libraries are in use to implement the neural networks that produce the models in our experiments, being Keras a frontend to use the tensorflow library.
+  }
+  \item {{\bf Librosa \citep{librosa}}}
+  \item [ ]{
+    A \textsc{\textsc{dsp}} library that we use to encode and calculate the sound representations described in chapter \ref{chap:design}.
+  }
+\end{itemize}
+
+\section{A data science framework}
+
+All the necessary code to implement the experiments in this work follows the principles and ideas presented in \citet{cookiecutter}, a data science framework focus on Python development.
+
+This framework, basically, creates a folder structure and promotes the use of \texttt{make} scripts to deal with common tasks and reproduce the experiments.
+
+The folder structure proposed by this framework introduce the use of the following folders:
+
+% \pic{folders.png}{Folder tree in this project}{Folder tree in this project}{fig:folderslabel}
+
+\begin{itemize}
+  \item {
+    \texttt{/data/}
+
+    All data files will be stored here.
+  }
+  \item {
+    \texttt{/data/external/}
+
+    A folder to store all external datasets. In our case a copy of GTZAN will be stored here after download.
+  }
+  \item {
+    \texttt{/data/raw/}
+
+    Raw versions of data, such as GTZAN audio files.
+  }
+  \item {
+    \texttt{/data/interim/}
+
+    Semi-processed datasets, converted audio files...
+  }
+  \item {
+    \texttt{/data/processed}
+
+    Fully processed data files: features extraced from the audio viles, \texttt{.csv} results...
+  }
+  \item {
+    \texttt{/data/temp/}
+
+    Temporal our auxiliary files.
+  }
+  \item {
+    \texttt{/src/}
+
+    Python files.
+  }
+  \item {
+    \texttt{/src/data/}
+
+    Code implementing \texttt{make} targets.
+  }
+  \item {
+    \texttt{/src/features/}
+
+    Scripts that implement feature extraction tasks.
+  }
+  \item {
+    \texttt{/src/models/}
+
+    Scripts that implement our models and their training phase.
+  }
+  \item {
+    \texttt{/src/utils/}
+
+    Common functions and scripts.
+  }
+  \item {
+    \texttt{/references/}
+
+    Metadata.
+  }
+  \item {
+    \texttt{/models/}
+
+    Trained models are stored here.
+  }
+  \item {
+    \texttt{/notebooks/}
+
+    We will find here several notebooks where we conducted our statistical analysis on our experimental results.
+  }
+\end{itemize}
+
+Let alone with the folder structure, the framework promotes the use of \texttt{make} files to deal with common tasks. In our case these tasks include downloading the \textsc{gtzan} dataset, pre-processing, model training, etc... Hence, the \texttt{make} commands are the tools that let us to reproduce the experimental process from scratch.
+
+To reproduce an experiment, we need to run a series os steps: download the \textsc{gtzan} dataset, extract the audio files and convert them to \texttt{.wav} format, calculate features from these audio files (i.e., calculate a particular sound representation), split the dataset into a \textsc{train/test} split, train a model and evaluate it against the songs included in the \textsc{test} dataset.
+
+The make scripts help us to deal with all the complexity of these tasks. Despite the \texttt{make} command provides its own documentation, it worth to describe each of them in detail:
+
+\begin{itemize}
+
+  \item {
+    {\bf Gathering data}: \texttt{make data}
+
+    \pic{make_data.png}{Fetch data, activities diagram}{Data gathering process, activities diagram}{fig:makedatalabel}
+
+    This command downloads the dataset from it source (if it hasn't been downloaded yet), extracts its contents and pre-process the audio files.
+  }
+
+  \item{
+    {\bf Train a model}: \texttt{make train}
+
+    \pic{make_train.png}{Train process, activities diagram}{Train process, activities diagram}{fig:maketrainlabel}
+
+    This command superseeds the previous and adds a model training on the \textsc{train} dataset.
+  }
+
+  \item{
+    {\bf Create \textsc{train/test} split and complete sound representation}: \texttt{make features}
+
+    \pic{make_features.png}{Feature creation, activities diagram}{Feature creation process, activities diagram}{fig:makefeatureslabel}
+
+    The arguments for this command let us define the sound representation (use) the dimensionality (dim) and the random seed (rs) in use to create the \textsc{train/test} split.
+  }
+
+  \item{
+    {\bf Evaluation of a model}: \texttt{make eval}
+
+    % {image_path}{short}{caption}{label}
+    \pic{make_eval.png}{Evaluation process, activities diagram}{Evaluation process, activities diagram}{fig:makeevallabel}
+
+    This command implements a full experiment process, i.e., if performs the tasks included in the previous \texttt{make} scripts and it also evaluates the trained model and store the results. The argument \texttt{batch} let us execute the evaluation process in a loop, hence, this is the routine we have used to complete our analysis.
+    \newpage
+  }
+\end{itemize}
+
+
+All the experiments in this work have been produced making use of these commands. Particularly, running executions of:
+
+
+\begin{verbatim}
+make data;
+make eval rs=0 use='MEL' dim=1 batch=97;
+make eval rs=0 use='MEL' dim=2 batch=97;
+make eval rs=0 use='QT' dim=1 batch=97;
+make eval rs=0 use='QT' dim=2 batch=97;
+\end{verbatim}
+
+Therefore the results can be reproduce running the same commands.
+
+\section{Notes on implementation}
+
+All processes and functions in the code are built upon two main objects, implemented in \texttt{Features.py} and \texttt{Model.py} files.
+
+\pic{uml.png}{UML Class diagram}{Feature class makes a distiction between 1D and 2D initializations
+which produces appropiate output shapes for the same representations}{fig:umllabel}
+
+\texttt{Features} takes the role of enconding all  the sound representations considered in our experiment and save them using the appropiate shape for each dimensionality setup.
+
+\texttt{Model} implements an inheritance patter where each children defines a single convolutional neural network ($1D$ or $2D$) of their convolutional frames. Table \ref{tab:conv1d} and Table \ref{tab:conv2d} describe in detail the geometry of both models.
+
+\begin{center}
+
+  \begin{tabularx}{\textwidth}{l X r}
+
+    \textbf{Layer (type)} & \textbf{Output shape} & \textbf{Params} \\
+    \hline
+    \hline
+    Conv1D\_1 & (None, 84, 16) & 6208 \\
+    \hline
+    Max\_Pooling1D\_1 & (MaxPooling1, (None, 42, 16)) & 0 \\
+    \hline
+    Dropout\_1 (Dropout) & (None, 42, 16) & 0 \\
+    \hline
+    Conv1D\_2 (Conv1D) & (None, 42, 32) & 1568 \\
+    \hline
+    Max\_Pooling1d\_2 & (MaxPooling1 (None, 21, 32)) & 0 \\
+    \hline
+    Dropout\_2 (Dropout) & (None, 21, 32) & 0 \\
+    \hline
+    Conv1d\_3 (Conv1D) & (None, 21, 64) & 6208 \\
+    \hline
+    MaxPooling1d\_3 & (MaxPooling1 (None, 10, 64)) & 0 \\
+    \hline
+    Dropout\_3 (Dropout) & (None, 10, 64) & 0 \\
+    \hline
+    Lstm\_1 (LSTM) & (None, 100) & 66000 \\
+    \hline
+    Dense\_1 (Dense) & (None, 10) & 1010 \\
+    \hline
+    \hline
+    Total params: 80,994 & & \\
+    Trainable params: 80,994 & & \\
+    Non-trainable params: 0 & & \\
+    \hline
+    \hline
+
+  \end{tabularx}
+
+  \captionof{table}{Keras summary for 1D models}
+  \label{tab:conv1d}
+
+\end{center}
+
+\begin{center}
+
+  \begin{tabularx}{\textwidth}{l X r}
+
+    \textbf{Layer (type)} & \textbf{Output shape} & \textbf{Params} \\
+    \hline
+    \hline
+    Conv2d\_1 (Conv2D) & (None, 84, 129, 8) & 80 \\
+    \hline
+    MaxPooling2d\_1 & (MaxPooling2 (None, 42, 64, 8)) & 0 \\
+    \hline
+    Dropout\_4 (Dropout) & (None, 42, 64, 8) & 0 \\
+    \hline
+    Conv2d\_2 (Conv2D) & (None, 42, 64, 16) & 1168 \\
+    \hline
+    MaxPooling2d\_2 & (MaxPooling2 (None, 21, 32, 16)) & 0 \\
+    \hline
+    Dropout\_5 (Dropout) & (None, 21, 32, 16) & 0 \\
+    \hline
+    Conv2d\_3 (Conv2D) & (None, 21, 32, 32) & 4640 \\
+    \hline
+    MaxPooling2d\_3 & (MaxPooling2 (None, 10, 16, 32)) & 0 \\
+    \hline
+    Dropout\_6 (Dropout) & (None, 10, 16, 32) & 0 \\
+    \hline
+    Flatten\_1 (Flatten) & (None, 5120) & 0 \\
+    \hline
+    Dense\_2 (Dense) & (None, 100) & 512100 \\
+    \hline
+    Dropout\_7 (Dropout) & (None, 100) & 0 \\
+    \hline
+    Dense\_3 (Dense) & (None, 100) & 10100 \\
+    \hline
+    Dropout\_8 (Dropout) & (None, 100) & 0 \\
+    \hline
+    Dense\_4 (Dense) & (None, 10) & 1010 \\
+    \hline
+    \hline
+    Total params: 529,098 & & \\
+    Trainable params: 529,098 & & \\
+    Non-trainable params: 0 & & \\
+    \hline
+
+  \end{tabularx}
+
+  \captionof{table}{Keras summary for 2D models}
+  \label{tab:conv2d}
+
+\end{center}
+
+Both models can use each sound representation provided by the \texttt{Features} object. They use a shared training phase (\texttt{Model.fit}) that contains a few important parameters and techniques:
+
+
+\begin{itemize}
+  \item {
+    A halt guard: to prevent overfitting we stop the training phase after $15$ epochs without improvement. Where {\it improvement} means a perceived reduction in validation loss greater or equal than $0.001$
+  }
+  \item {
+    L1 regularizers and dropout layers to prevent overfitting.
+  }
+  \item {
+    We use an Adam optimizer \citep{35} configured using the author's recommendation, i.e., $\alpha = 0.001$, $\beta_1 = 0.9$, $\beta_2 = 0.999$ and $\epsilon= 10^{-8}$
+  }
+
+  \item{
+    A $25$ batch size. This value was selected due to hardware constraints in the particular machine where we run the experiments. Higher values could have produced memory overflow errors.
+  }
+
+  \item {
+    A maximum of $400$ epochs. Althought the halt condition usually stops the process before this limit.
+  }
+
+  \item {The use of a validation set (an extra partiton which uses a $20\%$ of the \textsc{train} songs) to control the training of each algorithm.}
+\end{itemize}
+
+
+
+All the configuration options mentioned above have an impact on the training phase.
+
+\pic{model_accuracy.png}{Accuracy evolution during training phase.}{Accuracy evolution against the \textsc{train} and \textsc{VALIDATION} datasets using \textsc{melspectrograms} and a $1D$ algorithm}{fig:traininglabel}
+
+\pic{model_loss.png}{Loss evolution during training phase.}{Loss evolution against the \textsc{train} and \textsc{VALIDATION} datasets using \textsc{melspectrograms} and a $1D$ algorithm}{fig:losslabel}
+
+Particularly, they apply an early stop policy which reduces the number of epochs, preventing the learning process to adopt a "hockey stick" shape, both in terms of validation and training accuracy and loss.
+
+
+Since the evolution of validation loss figures is stochastic (Fig: \ref{fig:traininglabel}) with high variability across epochs, that also means that our resulting models could achieve greater accuracies if we used a more exhaustive training policy. However, our aim is to compare the factors involved in the experiment, not to produce highly accurate models. Therefore we decided to stop training as soon as the validation accuracy growth reached a plateau.
+
+
+\subsection{Mixing languages: why do we use both Python and R?}
+
+We have used Python $3.X$ to implement the vast majority of the scripts in this work: neural network design, training and evaluation, the data augmentation tasks, \textsc{gtzan} downloading and processing...
+
+However, the \textsc{anova} analysis (an important part of the project, commented in Chapter: \ref{chap:discussion}) has been implemented under a R-powered jupyter notebook.
+
+The reason for this is that Python 2-way \textsc{anova} implementations \footnote{The common Python library for this tasks} do not run under Python version $3.X$, and the alternative (Python Statsmodels) does not have the 2-way \textsc{anova} with repeated measures use case implemented. On the best of our knowledge, none of Python's $3.X$ provide functions to perform this experimental design, but R alternatives are widely available.
+
+Since we based our neural network design in Keras (which requires Python $3.X$) using both Python and R looks like a reasonable workaround.
+
+\section{Results}
+
+After each evaluation process the trained model is used to calculate a set of performance metrics:
+
+\begin{itemize}
+  \item {
+    {\bf Multiclass confusion matrix.}
+
+    A detailed accountability of correctly and incorrectly classified data points per class.
+  }
+  \item{
+    {\bf Per class recall}
+
+    When a song belongs to a certain category, how often the model classifies it correctly.
+  }
+  \item {
+    {\bf Per class precision.}
+
+    How often the algoritm is correct when it classifies a song in a certain class.
+  }
+
+  \item {
+    {\bf Overall accuracy}
+
+    Overall, how often the model is correct.
+  }
+
+\end{itemize}
+
+The outcome of an evaluation process is automatically stored in a \texttt{.csv} file named after the parameters used during the evaluation. For instance, a \texttt{make eval rs=42 use='MEL' dim=1 batch=1} execution will produce the file
+
+\begin{center}
+  \texttt{/data/processed/results/MEL/1D/42.csv}
+\end{center}
+
+containing the aforementioned metrics.
+
+
+We will use these results (the \texttt{.csv} files) as starting point for our statistical analysis, developed in the jupyter notebooks and commented in chapter \ref{chap:discussion}. In particular, precision and recall are used to explore the inter-class behaviour of the algorithms meanwhile we will use accuracy to compare the performance of different models.
